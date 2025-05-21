@@ -1,24 +1,19 @@
-name: Generate SBOM
+name: Genereer SBOM
 
-on:
-  push:
+on: [push]
 
 jobs:
-  sbom:
+  generate-sbom:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install dependencies
-        run: npm install
+      - name: Installeer CycloneDX
+        run: npm install -g @cyclonedx/bom
 
-      - name: Generate CycloneDX SBOM
-        run: npx @cyclonedx/cyclonedx-npm -o sbom.json
+      - name: Genereer SBOM
+        run: cyclonedx-bom -o sbom.json
 
-      - name: Upload SBOM artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: sbom
-          path: sbom.json
-
+      - name: Toon SBOM inhoud
+        run: cat sbom.json
