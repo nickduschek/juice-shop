@@ -1,4 +1,4 @@
-name: Genereer SBOM
+name: Generate SBOM
 
 on: [push]
 
@@ -6,9 +6,17 @@ jobs:
   generate-sbom:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Genereer SBOM met CycloneDX
-        uses: CycloneDX/gh-node-module-generatebom@v1
+      - name: Install dependencies
+        run: npm install
 
+      - name: Generate SBOM with CycloneDX
+        run: npx @cyclonedx/bom -o bom.xml
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v3
+        with:
+          name: sbom
+          path: bom.xml
