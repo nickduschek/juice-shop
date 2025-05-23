@@ -11,14 +11,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install project dependencies
         run: npm install
 
       - name: Install CycloneDX CLI
-        run: npm install --no-save @cyclonedx/bom
+        run: npm install --no-save cyclonedx-node-module
 
-      - name: Generate SBOM with CycloneDX
-        run: npx @cyclonedx/bom -o sbom.json
+      - name: Generate SBOM
+        run: npx cyclonedx-bom -o sbom.json
 
       - name: Upload SBOM artifact
         uses: actions/upload-artifact@v4
