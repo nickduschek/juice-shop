@@ -8,22 +8,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install project dependencies
-        run: npm install
+      - name: Install Docker (nodig op GitHub runner)
+        run: sudo apt-get update && sudo apt-get install -y docker.io
 
-      - name: Install CycloneDX CLI
-        run: npm install --no-save cyclonedx-node-module
+      - name: Generate CycloneDX SBOM via Docker
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/src cyclonedx/cyclonedx-npm -o /src/sbom.json
 
-      - name: Generate SBOM
-        run: npx cyclonedx-bom -o sbom.json
-
-      - name: Upload SBOM artifact
+      - name: Upload SBOM
         uses: actions/upload-artifact@v4
         with:
-          name: juice-shop-sbom
+          name: sbom
           path: sbom.json
+
 
 
