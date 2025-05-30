@@ -1,28 +1,29 @@
 name: Generate SBOM
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   sbom:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Install Docker (nodig op GitHub runner)
-        run: sudo apt-get update && sudo apt-get install -y docker.io
+    - name: Install dependencies
+      run: npm install
 
-      - name: Generate CycloneDX SBOM via Docker
-        run: |
-          docker run --rm -v ${{ github.workspace }}:/src cyclonedx/cyclonedx-npm -o /src/sbom.json
+    - name: Generate CycloneDX SBOM
+      run: npx @cyclonedx/cyclonedx-npm --output-format json --output-file sbom.json
 
-      - name: Upload SBOM
-        uses: actions/upload-artifact@v4
-        with:
-          name: sbom
-          path: sbom.json
+    - name: Upload SBOM as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: sbom
+        path: sbom.json
 
 
 
